@@ -87,27 +87,30 @@ $(function() {
 
     /* test suite named "New Feed Selection" */
     describe('New Feed Selection', function(){
-        const feed = document.querySelector('.feed');
-        const firstFeed = [];
-
+        let firstFeed = [];
+        let secondFeed = [];
         // loadFeed is asynchronous so this suite requires
         // the use of Jasmines beforeEach() and done() functions
          beforeEach(function(done){
-           loadFeed(0);
-           // push content into firstFeed array
-           Array.from(feed.children).forEach(function(entry){
-             firstFeed.push(entry.innerText);
+           loadFeed(0, function(){
+             // push content into firstFeed array
+             let feed = document.querySelector('.feed');
+             Array.from(feed.children).forEach(function(entry){
+               firstFeed.push(entry.innerText);
+             });
+             loadFeed(1, function(){
+               Array.from(feed.children).forEach(function(entry){
+                 secondFeed.push(entry.innerText);
+               });
+               done();
            });
-           loadFeed(1,done);
+          });
          });
 
          // a test that ensures when a new feed is loaded
          // by the loadFeed function that the content actually changes.
          it('content changes', function(){
-           Array.from(feed.children).forEach(function(entry,index){
-             expect(entry.innerText === firstFeed[index]).toBe(false);
-           });
-
+           expect(firstFeed[0] === secondFeed[0]).toBe(false);
          });
 
     });
